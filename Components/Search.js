@@ -4,28 +4,24 @@ import FilmItem from './FilmItem';
 import { getFilmsFromApiWithSearchedText } from '../API/TMDBApi';
 export default function Search() {
     const [films, setFilms] = useState([])
-    let searchText;
+    const [searchText, setSearchText] = useState('')
     const [isLoading, setIsLoading] = useState(false);
-    let page = 0;
+    let [page, setPage] = useState(0)
+
     let totalPages = 0;
     const loadFilms = () => {
         if (searchText.length > 0) {
             setIsLoading(true)
-            getFilmsFromApiWithSearchedText(searchText, page+1).then(data => {
-                page = data.page;
-                console.log('page:'+page)
-                console.log(typeof(page))
-                totalPages=data.total_pages;
-                console.log('ttpage'+totalPages)
-                console.log(typeof(totalPages))
-                console.log('data'+data)
-                setFilms([...films,...data.results]);
+            getFilmsFromApiWithSearchedText(searchText, page).then(data => {
+                setPage(data.page);
+                totalPages = data.total_pages;
+                setFilms([...films, ...data.results]);
                 setIsLoading(false)
             })
         }
     };
     const searchTextInputChanged = (text) => {
-        searchText = text;
+        setSearchText(text);
     }
     const displayLoading = () => {
         if (isLoading) {
@@ -53,18 +49,20 @@ export default function Search() {
                 onEndReachedThreshold={0.5}
                 onEndReached={() => {
                     console.log('reach')
-                    if(page< totalPages){
+                    if (page <= totalPages) {
+                        console.log('conditon ok')
                         loadFilms();
+
                     }
                 }}
-                        />
-                        { displayLoading() }
+            />
+            {displayLoading()}
         </View>
     )
 }
 const styles = StyleSheet.create({
-    textinput:{
-        marginTop:30
+    textinput: {
+        marginTop: 30
     },
     main_container: {
 
