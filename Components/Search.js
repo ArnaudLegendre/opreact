@@ -1,81 +1,97 @@
-import React, { useState } from 'react';
-import { View, TextInput, Button, StyleSheet, FlatList, ActivityIndicator } from 'react-native';
-import FilmItem from './FilmItem';
-import { getFilmsFromApiWithSearchedText } from '../API/TMDBApi';
-export default function Search() {
-    const [films, setFilms] = useState([])
-    const [searchText, setSearchText] = useState('')
+import React, { useState, useEffect } from "react";
+import {
+    View,
+    TextInput,
+    Button,
+    StyleSheet,
+    FlatList,
+    ActivityIndicator,
+} from "react-native";
+import FilmItem from "./FilmItem";
+import { getFilmsFromApiWithSearchedText } from "../API/TMDBApi";
+export default function Search(props) {
+    const [films, setFilms] = useState([]);
+    const [searchText, setSearchText] = useState("");
     const [isLoading, setIsLoading] = useState(false);
-    let [page, setPage] = useState(0)
+    const [page, setPage] = useState(1);
+    const [totalPages, setTotalPages] = useState(0);
+    useEffect(() => {
+        loadFilms(true);
+    }, [searchText])
 
-    let totalPages = 0;
-    const loadFilms = () => {
-        if (searchText.length > 0) {
-            setIsLoading(true)
-            getFilmsFromApiWithSearchedText(searchText, page).then(data => {
-                setPage(data.page);
-                totalPages = data.total_pages;
-                setFilms([...films, ...data.results]);
-                setIsLoading(false)
-            })
+    const loadFilms = (reset = false) => {
+        if (reset) {
+            setPage(1);
+            setTotalPages(0);
+            setFilms([]);
+        }
+        if (searchText.length > 0 && reset == false) {
+            setIsLoading(true);
+            console.log(searchText);
+            getFilmsFromApiWithSearchedText(searchText, page).then(
+                (data) => {
+                    setPage(data.page);
+                    setTotalPages(data.total_pages);
+                    setFilms([...films, ...data.results]);
+                    setIsLoading(false);
+                    setPage(page + 1);
+                }
+            );
         }
     };
     const searchTextInputChanged = (text) => {
         setSearchText(text);
-    }
+    };
     const displayLoading = () => {
         if (isLoading) {
             return (
                 <View style={styles.loading_container}>
-                    <ActivityIndicator size='large' />
+                    <ActivityIndicator size="large" />
                 </View>
-            )
+            );
         }
-    }
+    };
+    const displayDetailForFilm = (idFilm) => {
+        console.log("Display film with id " + idFilm)
+        props.navigation.navigate("FilmDetail", {idFilm: idFilm})
+    };
+    
 
     return (
-        <View style={styles.main_container}>
+        <View>
             <TextInput
                 style={styles.textinput}
-                placeholder='Titre du film'
+                placeholder="Titre du film"
                 onChangeText={(text) => searchTextInputChanged(text)}
-                onSubmitEditing={() => loadFilms()}
+
             />
-            <Button title='Rechercher' onPress={() => loadFilms()} />
+            <Button title="Rechercher" onPress={() => loadFilms()} />
             <FlatList
                 data={films}
                 keyExtractor={(item) => item.id.toString()}
-                renderItem={({ item }) => <FilmItem film={item} />}
-                onEndReachedThreshold={0.5}
+                renderItem={({ item }) => <FilmItem film={item} displayDetailForFilm={displayDetailForFilm} />}
+                onEndReachedThreshold={1}
                 onEndReached={() => {
-                    console.log('reach')
                     if (page <= totalPages) {
-                        console.log('conditon ok')
                         loadFilms();
-
                     }
                 }}
             />
             {displayLoading()}
         </View>
-    )
+    );
 }
 const styles = StyleSheet.create({
     textinput: {
-        marginTop: 30
-    },
-    main_container: {
-
-        marginTop: 20,
-
+        marginTop: 30,
     },
     loading_container: {
-        position: 'absolute',
+        position: "absolute",
         left: 0,
         right: 0,
         top: 100,
         bottom: 0,
-        alignItems: 'center',
-        justifyContent: 'center'
-    }
-})
+        alignItems: "center",
+        justifyContent: "center",
+    },
+});
