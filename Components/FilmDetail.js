@@ -1,10 +1,21 @@
-import React from 'react'
-import { StyleSheet, View, Text } from 'react-native'
-export default function FilmDetail(props) {
-    console.log(props.navigation)
+import React,{ useState} from 'react'
+import { StyleSheet, View, Text, ActivityIndicator } from 'react-native'
+export default function FilmDetail() {
+    const [film, setFilm] = useState(undefined);
+    const [isLoading, setIsLoading] = useState(true);
+    const displayLoading = () => {
+        if (isLoading) {
+            return (
+                <View style={styles.loading_container}>
+                    <ActivityIndicator size="large" />
+                </View>
+            );
+        }
+    };
+    
     return (
         <View style={styles.main_container}>
-            <Text>Détail du film{props.navigation.getParam('idFilm')}</Text>
+            {displayLoading}
         </View>
     )
 
@@ -12,5 +23,15 @@ export default function FilmDetail(props) {
 const styles = StyleSheet.create({
     main_container: {
         flex: 1,
-    }
+    },
+    loading_container: {
+        position: "absolute",
+        left: 0,
+        right: 0,
+        top: 100,
+        bottom: 0,
+        alignItems: "center",
+        justifyContent: "center",
+    },
 })
+
