@@ -1,7 +1,17 @@
 import React from 'react';
 import { View, StyleSheet, Text, Image, TouchableOpacity } from 'react-native';
 import { getImageFromApi } from '../API/TMDBApi'
-const FilmItem =({film, displayDetailForFilm})=>{
+import moment from 'moment'
+const FilmItem =({film, displayDetailForFilm, isFilmFavorite})=>{
+    const displayFavoriteImage =()=>{
+        if(isFilmFavorite){
+            return(
+                <Image style={styles.favorite_image}
+                source={require('../images/icfav.png')}
+                />
+            )
+        }
+    }
     return (
         <TouchableOpacity 
         style={styles.main_container} 
@@ -13,6 +23,7 @@ const FilmItem =({film, displayDetailForFilm})=>{
             />
             <View style={styles.content_container}>
                 <View style={styles.header_container}>
+                    {displayFavoriteImage()}
                     <Text style={styles.title_text}>{film.title}</Text>
                     <Text style={styles.vote_text}>{film.vote_average}</Text>
                 </View>
@@ -20,7 +31,7 @@ const FilmItem =({film, displayDetailForFilm})=>{
                     <Text style={styles.description_text} numberOfLines={6}>{film.overview}</Text>
                 </View>
                 <View style={styles.date_container}>
-                    <Text style={styles.date_text}>Sorti le {film.release_date}</Text>
+                    <Text style={styles.date_text}>Sorti le {moment(new Date(film.release_date)).format('DD.MM.YYYY')}</Text>
                 </View>
             </View>
         </TouchableOpacity>
@@ -72,5 +83,10 @@ const styles = StyleSheet.create({
     date_text: {
         textAlign: 'right',
         fontSize: 14
+    },
+    favorite_image:{
+        width: 25,
+        height: 25,
+        marginRight: 5
     }
 })

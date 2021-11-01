@@ -9,7 +9,13 @@ import {
 } from "react-native";
 import FilmItem from "./FilmItem";
 import { getFilmsFromApiWithSearchedText } from "../API/TMDBApi";
-export default function Search(props) {
+import { connect } from "react-redux";
+const mapStateToProps = state => {
+    return {
+        favoritesFilm: state.favoritesFilm
+    }
+}
+const Search = props => {
     const [films, setFilms] = useState([]);
     const [searchText, setSearchText] = useState("");
     const [isLoading, setIsLoading] = useState(false);
@@ -27,7 +33,7 @@ export default function Search(props) {
         }
         if (searchText.length > 0 && reset == false) {
             setIsLoading(true);
-            console.log(searchText);
+
             getFilmsFromApiWithSearchedText(searchText, page).then(
                 (data) => {
                     setPage(data.page);
@@ -53,9 +59,10 @@ export default function Search(props) {
     };
     const displayDetailForFilm = (idFilm) => {
         console.log("Display film with id " + idFilm)
-        props.navigation.navigate("FilmDetail", {idFilm: idFilm})
+        
+        props.navigation.navigate("FilmDetail", {idFilm: idFilm })
     };
-    
+
 
     return (
         <View>
@@ -66,10 +73,16 @@ export default function Search(props) {
 
             />
             <Button title="Rechercher" onPress={() => loadFilms()} />
+
             <FlatList
                 data={films}
+                extraData={props.favoritesFilm}
                 keyExtractor={(item) => item.id.toString()}
-                renderItem={({ item }) => <FilmItem film={item} displayDetailForFilm={displayDetailForFilm} />}
+                renderItem={({ item }) =>
+                    <FilmItem
+                        film={item}
+                        isFilmFavorite={(props.favoritesFilm.findIndex(film => film.id === item.id) !== -1) ? true : false}
+                        displayDetailForFilm={displayDetailForFilm} />}
                 onEndReachedThreshold={1}
                 onEndReached={() => {
                     if (page <= totalPages) {
@@ -81,6 +94,7 @@ export default function Search(props) {
         </View>
     );
 }
+export default connect(mapStateToProps)(Search)
 const styles = StyleSheet.create({
     textinput: {
         marginTop: 30,
