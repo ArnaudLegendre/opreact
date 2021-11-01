@@ -1,33 +1,30 @@
-import React, { useState} from 'react'
+import React, { useState } from 'react'
 import { StyleSheet, FlatList } from 'react-native'
 import FilmItem from './FilmItem'
 import { connect } from 'react-redux'
 
-const FilmList = props => {
-    const [film, setFilm] = useState(undefined);
+const FilmList = ({props, films, favoritesFilm, page, totalPages, loadFilms,navigation}) => {
 
     const displayDetailForFilm = (idFilm) => {
         console.log("Display film with id " + idFilm)
-        props.navigation.navigate("FilmDetail", { idFilm: idFilm })
+        navigation.navigate("FilmDetail", { idFilm: idFilm })
     };
     return (
+
         <FlatList
-            style={styles.list}
-            data={film}
-            extraData={props.favoritesFilm}
+        style={styles.list}
+            data={films}
+            extraData={favoritesFilm}
             keyExtractor={(item) => item.id.toString()}
-            renderItem={({ item }) => (
+            renderItem={({ item }) =>
                 <FilmItem
                     film={item}
-                    isFilmFavorite={(props.favoritesFilm.findIndex(film => film.id === item.id) !== -1) ? true : false}
-                    displayDetailForFilm={displayDetailForFilm}
-                />
-            )}
-            onEndReachedThreshold={0.5}
+                    isFilmFavorite={(favoritesFilm.findIndex(film => film.id === item.id) !== -1) ? true : false}
+                    displayDetailForFilm={displayDetailForFilm} />}
+            onEndReachedThreshold={1}
             onEndReached={() => {
-                if (this.props.page < this.props.totalPages) {
-                    // On appelle la méthode loadFilm du component Search pour charger plus de films
-                    this.props.loadFilms()
+                if (page <= totalPages) {
+                    loadFilms();
                 }
             }}
         />

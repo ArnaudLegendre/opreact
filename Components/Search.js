@@ -8,6 +8,7 @@ import {
     ActivityIndicator,
 } from "react-native";
 import FilmItem from "./FilmItem";
+import FilmList from "./FilmList";
 import { getFilmsFromApiWithSearchedText } from "../API/TMDBApi";
 import { connect } from "react-redux";
 const mapStateToProps = state => {
@@ -59,8 +60,8 @@ const Search = props => {
     };
     const displayDetailForFilm = (idFilm) => {
         console.log("Display film with id " + idFilm)
-        
-        props.navigation.navigate("FilmDetail", {idFilm: idFilm })
+
+        props.navigation.navigate("FilmDetail", { idFilm: idFilm })
     };
 
 
@@ -73,23 +74,13 @@ const Search = props => {
 
             />
             <Button title="Rechercher" onPress={() => loadFilms()} />
+            <FilmList
+                films={films}
+                navigation={props.navigation}
+                loadFilms={loadFilms}
+                page={page}
+                totalPages={totalPages} />
 
-            <FlatList
-                data={films}
-                extraData={props.favoritesFilm}
-                keyExtractor={(item) => item.id.toString()}
-                renderItem={({ item }) =>
-                    <FilmItem
-                        film={item}
-                        isFilmFavorite={(props.favoritesFilm.findIndex(film => film.id === item.id) !== -1) ? true : false}
-                        displayDetailForFilm={displayDetailForFilm} />}
-                onEndReachedThreshold={1}
-                onEndReached={() => {
-                    if (page <= totalPages) {
-                        loadFilms();
-                    }
-                }}
-            />
             {displayLoading()}
         </View>
     );
