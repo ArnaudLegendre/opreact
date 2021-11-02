@@ -8,8 +8,8 @@ import Search from '../Components/Search';
 
 const homeStack = createStackNavigator();
 const homeStackScreen = () => (
-    <homeStack.Navigator>
-        <homeStack.Screen name="Search" component={Search} />
+    <homeStack.Navigator >
+        <homeStack.Screen name="Search" component={Search} options={{headerShown: false}}/>
         <homeStack.Screen name="FilmDetail" component={FilmDetail} />
     </homeStack.Navigator>
 )
@@ -19,10 +19,10 @@ const Tab = createBottomTabNavigator();
 export default function App() {
     return (
         <NavigationContainer>
-    <Tab.Navigator>
-        <Tab.Screen name="Accueil" component={homeStackScreen} />
-        <Tab.Screen name="Favorites" component={Favorites} />
-    </Tab.Navigator>
+            <Tab.Navigator>
+                <Tab.Screen name="Accueil" component={homeStackScreen} />
+                <Tab.Screen name="Favorites" component={Favorites} />
+            </Tab.Navigator>
         </NavigationContainer>
     );
 }

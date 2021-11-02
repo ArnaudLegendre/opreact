@@ -21,9 +21,9 @@ const FilmDetail = props => {
     const [isLoading, setIsLoading] = useState(true);
     useEffect(() => {
         getFilmDetailFromApi(props.route.params.idFilm).then(data => {
-            console.log(data)
+            
             setFilm(data)
-            console.log(film)
+            
             setIsLoading(false)
         })
     }, [])
@@ -58,7 +58,7 @@ const FilmDetail = props => {
 
     const displayFilm = () => {
         if (film) {
-            console.log(props)
+            
             return (
 
                 <ScrollView style={styles.scrollview_container}>

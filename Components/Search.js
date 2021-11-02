@@ -28,18 +28,21 @@ const Search = props => {
 
     const loadFilms = (reset = false) => {
         if (reset) {
-            setPage(1);
+            setPage(0);
             setTotalPages(0);
             setFilms([]);
         }
         if (searchText.length > 0 && reset == false) {
             setIsLoading(true);
 
-            getFilmsFromApiWithSearchedText(searchText, page).then(
+            getFilmsFromApiWithSearchedText(searchText, page+1).then(
                 (data) => {
                     setPage(data.page);
+                    
                     setTotalPages(data.total_pages);
+                    
                     setFilms([...films, ...data.results]);
+                    
                     setIsLoading(false);
                     setPage(page + 1);
                 }
@@ -58,15 +61,9 @@ const Search = props => {
             );
         }
     };
-    const displayDetailForFilm = (idFilm) => {
-        console.log("Display film with id " + idFilm)
-
-        props.navigation.navigate("FilmDetail", { idFilm: idFilm })
-    };
-
 
     return (
-        <View>
+        <View style={styles.container}> 
             <TextInput
                 style={styles.textinput}
                 placeholder="Titre du film"
@@ -80,7 +77,6 @@ const Search = props => {
                 loadFilms={loadFilms}
                 page={page}
                 totalPages={totalPages} />
-
             {displayLoading()}
         </View>
     );
@@ -89,6 +85,9 @@ export default connect(mapStateToProps)(Search)
 const styles = StyleSheet.create({
     textinput: {
         marginTop: 30,
+    },
+    container: {
+        flex:1
     },
     loading_container: {
         position: "absolute",
