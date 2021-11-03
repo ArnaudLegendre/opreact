@@ -9,7 +9,7 @@ import Search from '../Components/Search';
 const homeStack = createStackNavigator();
 const homeStackScreen = () => (
     <homeStack.Navigator >
-        <homeStack.Screen name="Search" component={Search} options={{headerShown: false}}/>
+        <homeStack.Screen name="Search" component={Search}/>
         <homeStack.Screen name="FilmDetail" component={FilmDetail} />
     </homeStack.Navigator>
 )

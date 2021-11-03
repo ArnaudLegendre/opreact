@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react'
-import { StyleSheet, View, Text, ActivityIndicator, ScrollView, Image, Button, TouchableOpacity } from 'react-native'
+import { StyleSheet, View, Text, ActivityIndicator, ScrollView, Image, Share, TouchableOpacity, Platform } from 'react-native'
 import { getFilmDetailFromApi, getImageFromApi } from '../API/TMDBApi'
 import moment from 'moment'
 import numeral from 'numeral'
@@ -15,20 +15,35 @@ const mapDispatchToProps = (dispatch) => {
     }
 }
 
+
 const FilmDetail = props => {
 
     const [film, setFilm] = useState(undefined);
     const [isLoading, setIsLoading] = useState(true);
     useEffect(() => {
         getFilmDetailFromApi(props.route.params.idFilm).then(data => {
-            
             setFilm(data)
-            
             setIsLoading(false)
         })
     }, [])
-
-
+    const shareFilm = () => {
+        const filmtoshare = film
+        Share.share({ title: filmtoshare.title, message: filmtoshare.overview })
+    }
+    const displayFloating = () => {
+        const filmtoshare  = film
+        if (filmtoshare != undefined && Platform.OS === 'android') { // Uniquement sur Android et lorsque le film est chargé
+            return (
+                <TouchableOpacity
+                    style={styles.share_touchable_floatingactionbutton}
+                    onPress={() => shareFilm()}>
+                    <Image
+                        style={styles.share_image}
+                        source={require('../images/ic-share.png')} />
+                </TouchableOpacity>
+            )
+        }
+    }
     const displayLoading = () => {
         if (isLoading) {
             return (
@@ -42,10 +57,10 @@ const FilmDetail = props => {
         const action = { type: "TOGGLE_FAVORITE", value: film }
         props.dispatch(action)
     }
-    const displayFavoriteImage=()=> {
+    const displayFavoriteImage = () => {
         var sourceImage = require('../images/ic-nofav.png')
         if (props.favoritesFilm.findIndex(item => item.id === film.id) !== -1) {
-            // Film dans nos favoris
+
             sourceImage = require('../images/icfav.png')
         }
         return (
@@ -58,9 +73,7 @@ const FilmDetail = props => {
 
     const displayFilm = () => {
         if (film) {
-            
             return (
-
                 <ScrollView style={styles.scrollview_container}>
                     <Image
                         style={styles.image}
@@ -93,6 +106,7 @@ const FilmDetail = props => {
         <View style={styles.main_container}>
             {displayFilm()}
             {displayLoading()}
+            {displayFloating()}
         </View>
     );
 
@@ -106,9 +120,9 @@ const styles = StyleSheet.create({
         width: 40,
         height: 40
     },
-    favorite_container :{
+    favorite_container: {
         alignItems: 'center',
-    
+
     },
     image: {
         height: 169,
@@ -136,6 +150,21 @@ const styles = StyleSheet.create({
     },
     scrollview_container: {
         flex: 1,
+    },
+    share_touchable_floatingactionbutton: {
+        position: 'absolute',
+        width: 60,
+        height: 60,
+        right: 30,
+        bottom: 30,
+        borderRadius: 30,
+        backgroundColor: '#e91e63',
+        justifyContent: 'center',
+        alignItems: 'center'
+    },
+    share_image: {
+        width: 30,
+        height: 30
     }
 })
 export default connect(mapStateToProps, mapDispatchToProps)(FilmDetail)

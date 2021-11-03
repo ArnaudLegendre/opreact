@@ -1,12 +1,24 @@
 import React from 'react'
-import { StyleSheet, Text } from 'react-native'
+import { StyleSheet} from 'react-native'
+import FilmList from './FilmList'
+import {connect} from 'react-redux'
 
-const Favorites = props => {
+const Favorites = ({favoritesFilm, navigation}) => {
     return (
-        <Text>Mes favoris</Text>
+        <FilmList
+        films={favoritesFilm}
+        navigation={navigation}
+        favoritesList={true}
+        />
     )
 }
 const styles = StyleSheet.create({
 
 })
-export default Favorites
+const mapStateToProps = state => {
+    return {
+        favoritesFilm: state.favoritesFilm
+    }
+}
+
+export default connect(mapStateToProps)(Favorites)

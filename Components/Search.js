@@ -76,7 +76,9 @@ const Search = props => {
                 navigation={props.navigation}
                 loadFilms={loadFilms}
                 page={page}
-                totalPages={totalPages} />
+                totalPages={totalPages}
+                favoriteList={false}
+                />
             {displayLoading()}
         </View>
     );
