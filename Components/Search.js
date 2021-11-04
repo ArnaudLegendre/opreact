@@ -1,13 +1,5 @@
 import React, { useState, useEffect } from "react";
-import {
-    View,
-    TextInput,
-    Button,
-    StyleSheet,
-    FlatList,
-    ActivityIndicator,
-} from "react-native";
-import FilmItem from "./FilmItem";
+import {View,TextInput,Button,StyleSheet,ActivityIndicator} from "react-native";
 import FilmList from "./FilmList";
 import { getFilmsFromApiWithSearchedText } from "../API/TMDBApi";
 import { connect } from "react-redux";
